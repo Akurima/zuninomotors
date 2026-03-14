@@ -34,7 +34,10 @@ const demoVehicles: DemoVehicle[] = [
 ];
 
 const VehicleCard = ({ vehicle, index }: { vehicle: DemoVehicle | Vehicle; index: number }) => {
-  const imgSrc = vehicle.image_url || carCorolla;
+const imgSrc =
+ vehicle.image_url && vehicle.image_url !== ""
+  ? vehicle.image_url
+  : carCorolla;
   const fuel = ('fuel' in vehicle && vehicle.fuel) || "Nafta";
 
   return (
