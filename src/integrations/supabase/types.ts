@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      vehicles: {
+        Row: {
+          brand: string
+          created_at: string
+          description: string | null
+          fuel: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          km: string
+          model: string
+          price: string
+          transmission: string | null
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          brand: string
+          created_at?: string
+          description?: string | null
+          fuel?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          km: string
+          model: string
+          price: string
+          transmission?: string | null
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          brand?: string
+          created_at?: string
+          description?: string | null
+          fuel?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          km?: string
+          model?: string
+          price?: string
+          transmission?: string | null
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
