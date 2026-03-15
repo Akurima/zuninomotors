@@ -33,18 +33,19 @@ const HeroSection = () => {
         >
           ZUNINO
           <br />
-          MOTORS
+         ―MOTORS―
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-primary-foreground/80 text-lg md:text-xl max-w-xl mx-auto mb-10 font-body font-light"
-        >
-          Compra, venta y permuta de vehículos.
-          <br />
-          Encontrá tu próximo auto con confianza.
+          className="text-primary-foreground/80 text-lg md:text-xl   mx-auto mb-10 font-body font-light"
+        >     
+          <br />  
+          Vehículos seleccionados, excelentes oportunidades y atención personalizada.
+          <br />  
+          Comprá, vendé o permutá tu auto con confianza.  
         </motion.p>
 
         <motion.div

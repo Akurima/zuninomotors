@@ -16,7 +16,7 @@ export default function Login(){
   })
 
   if(error){
-   alert("Credenciales incorrectas")
+   alert("Credenciales incorrectas, contacta con un administrador si crees que esto es un error.")
   } else {
    navigate("/admin")
   }
@@ -29,20 +29,20 @@ export default function Login(){
 
    <div className="flex flex-col gap-4 w-80">
 
-    <h1 className="text-2xl">Admin Login</h1>
+    <h1 className="text-center text-2xl ">Zunino Motors <br />    Panel Administraivo</h1>
 
     <input
-     placeholder="Email"
+     placeholder="Correo electrónico"
      onChange={(e)=>setEmail(e.target.value)}
     />
 
     <input
      type="password"
-     placeholder="Password"
+     placeholder="Contraseña"
      onChange={(e)=>setPassword(e.target.value)}
     />
 
-    <button onClick={handleLogin}>
+    <button onClick={handleLogin} style={{backgroundColor: "#333", color: "#fff"}} className="p-2"  >
      Ingresar
     </button>
 
