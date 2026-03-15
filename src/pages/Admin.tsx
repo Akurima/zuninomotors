@@ -129,23 +129,20 @@ export default function Admin(){
  }
 
  return(
- <div className="p-10">
-<<<<<<< Updated upstream
-  <h1 className="text-3xl mb-6">Panel Zunino Motors</h1>
-=======
+ <div className="p-10 justify-center items-center" style={{backgroundColor: "#ffffff"}}>
+  <h1 className="text-4xl mb-6 text-center">Zunino Motors</h1>
 
-  <h1 className="text-3xl mb-6">PANEL - ZUNINO MOTORS</h1>
->>>>>>> Stashed changes
+  <h3 className="text-3xl mb-6 text-center">PANEL Administrativo</h3>
 
   {/* FORMULARIO AGREGAR */}
-  <div className="flex flex-col gap-3 max-w-sm mb-10">
+  <div className="flex flex-col gap-3 max-w-md mb-10 p-6 border mx-auto">
    <input placeholder="Marca" onChange={(e)=>setBrand(e.target.value)} className="border p-2" />
    <input placeholder="Modelo" onChange={(e)=>setModel(e.target.value)} className="border p-2" />
    <input placeholder="Año" onChange={(e)=>setYear(e.target.value)} className="border p-2" />
    <input placeholder="Precio" onChange={(e)=>setPrice(e.target.value)} className="border p-2" />
    <input placeholder="KM" onChange={(e)=>setKm(e.target.value)} className="border p-2" />
    <input type="file" onChange={(e)=>setImage(e.target.files?.[0] || null)} />
-   <button onClick={addVehicle} className="bg-foreground text-background p-2">Agregar vehículo</button>
+   <button onClick={addVehicle} className="bg-foreground text-background p-2" style={{backgroundColor: "#66a8f3", color: "#fff", borderRadius: "4px"}}>Agregar vehículo</button>
   </div>
 
   {/* TABLA */}
@@ -219,14 +216,6 @@ export default function Admin(){
      {uploadingImages && <p className="text-sm text-muted-foreground mt-2">Subiendo imágenes...</p>}
     </div>
 
-<<<<<<< Updated upstream
-    <div className="flex gap-3 mt-6">
-     <button onClick={updateVehicle} className="bg-primary text-primary-foreground p-2 px-6">Guardar cambios</button>
-     <button onClick={()=>{setEditingCar(null);setEditingImages([])}} className="border p-2 px-6">Cancelar</button>
-    </div>
-   </div>
-  )}
-=======
 <h2 className="text-xl mb-4">
 Editar vehículo
 </h2>
@@ -278,15 +267,15 @@ Cancelar
 )}
 
   
->>>>>>> Stashed changes
 
   <br/>
   <button
    onClick={async()=>{ await supabase.auth.signOut(); window.location.href="/login" }}
-   className="bg-muted text-muted-foreground px-4 py-2"
+   className="bg-muted text-muted-foreground px-4 py-2 mx-auto block"
+   style={{backgroundColor: "#66a8f3", color: "#fff", borderRadius: "4px" }}
   >
    Cerrar sesión
   </button>
  </div>
  )
-}
+} 
