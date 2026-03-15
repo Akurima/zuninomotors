@@ -9,6 +9,7 @@ type Vehicle = {
  price: string
  km: string
  image_url?: string
+ description?: string | null
 }
 
 export default function Admin(){
@@ -146,16 +147,17 @@ const deleteVehicle = async(id:string)=>{
 
  if(!editingCar) return
 
- const { error } = await supabase
-  .from("vehicles")
-  .update({
-   brand:editingCar.brand,
-   model:editingCar.model,
-   year:editingCar.year,
-   price:editingCar.price,
-   km:editingCar.km
-  })
-  .eq("id",editingCar.id)
+  const { error } = await supabase
+   .from("vehicles")
+   .update({
+    brand:editingCar.brand,
+    model:editingCar.model,
+    year:editingCar.year,
+    price:editingCar.price,
+    km:editingCar.km,
+    description:editingCar.description
+   })
+   .eq("id",editingCar.id)
 
  if(error){
   console.log(error)
@@ -324,6 +326,13 @@ Editar vehículo
 <input
  value={editingCar.km}
  onChange={(e)=>setEditingCar({...editingCar,km:e.target.value})}
+/>
+
+<textarea
+ placeholder="Descripción del vehículo"
+ value={editingCar.description || ""}
+ onChange={(e)=>setEditingCar({...editingCar,description:e.target.value})}
+ className="w-full border p-2 mt-2 min-h-[100px]"
 />
 
 <button
