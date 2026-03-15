@@ -9,6 +9,7 @@ type Vehicle = {
  price: string
  km: string
  image_url?: string
+ description?: string | null
 }
 
 export default function Admin(){
