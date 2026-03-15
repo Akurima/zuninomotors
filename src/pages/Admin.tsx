@@ -130,7 +130,12 @@ export default function Admin(){
 
  return(
  <div className="p-10">
+<<<<<<< Updated upstream
   <h1 className="text-3xl mb-6">Panel Zunino Motors</h1>
+=======
+
+  <h1 className="text-3xl mb-6">PANEL - ZUNINO MOTORS</h1>
+>>>>>>> Stashed changes
 
   {/* FORMULARIO AGREGAR */}
   <div className="flex flex-col gap-3 max-w-sm mb-10">
@@ -214,12 +219,66 @@ export default function Admin(){
      {uploadingImages && <p className="text-sm text-muted-foreground mt-2">Subiendo imágenes...</p>}
     </div>
 
+<<<<<<< Updated upstream
     <div className="flex gap-3 mt-6">
      <button onClick={updateVehicle} className="bg-primary text-primary-foreground p-2 px-6">Guardar cambios</button>
      <button onClick={()=>{setEditingCar(null);setEditingImages([])}} className="border p-2 px-6">Cancelar</button>
     </div>
    </div>
   )}
+=======
+<h2 className="text-xl mb-4">
+Editar vehículo
+</h2>
+
+<p>Aquí puedes editar los detalles del vehículo.</p> <br />
+
+<input
+ value={editingCar.brand}
+ onChange={(e)=>setEditingCar({...editingCar,brand:e.target.value})}
+/>
+
+<input
+ value={editingCar.model}
+ onChange={(e)=>setEditingCar({...editingCar,model:e.target.value})}
+/>
+
+<input
+ value={editingCar.year}
+ onChange={(e)=>setEditingCar({...editingCar,year:Number(e.target.value)})}
+/>
+
+<input
+ value={editingCar.price}
+ onChange={(e)=>setEditingCar({...editingCar,price:e.target.value})}
+/>
+
+<input
+ value={editingCar.km}
+ onChange={(e)=>setEditingCar({...editingCar,km:e.target.value})}
+/>
+
+<br />
+<button
+ onClick={updateVehicle}
+ className="bg-green-600 text-white p-2 mt-4"
+>
+Guardar cambios
+</button>
+
+<button
+ onClick={()=>setEditingCar(null)}
+ className="ml-4"
+>
+Cancelar
+</button>
+
+</div>
+
+)}
+
+  
+>>>>>>> Stashed changes
 
   <br/>
   <button
