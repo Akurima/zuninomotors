@@ -147,16 +147,17 @@ const deleteVehicle = async(id:string)=>{
 
  if(!editingCar) return
 
- const { error } = await supabase
-  .from("vehicles")
-  .update({
-   brand:editingCar.brand,
-   model:editingCar.model,
-   year:editingCar.year,
-   price:editingCar.price,
-   km:editingCar.km
-  })
-  .eq("id",editingCar.id)
+  const { error } = await supabase
+   .from("vehicles")
+   .update({
+    brand:editingCar.brand,
+    model:editingCar.model,
+    year:editingCar.year,
+    price:editingCar.price,
+    km:editingCar.km,
+    description:editingCar.description
+   })
+   .eq("id",editingCar.id)
 
  if(error){
   console.log(error)
