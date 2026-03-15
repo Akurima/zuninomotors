@@ -1,21 +1,36 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
-  { label: "Inicio", href: "#inicio" },
-  { label: "Vehículos", href: "#vehiculos" },
-  { label: "Servicios", href: "#servicios" },
-  { label: "Contacto", href: "#contacto" },
+  { label: "Inicio", href: "inicio" },
+  { label: "Vehículos", href: "vehiculos" },
+  { label: "Servicios", href: "servicios" },
+  { label: "Contacto", href: "contacto" },
 ];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    setIsOpen(false);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offset = 64; // navbar height
+      const top = element.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  }, []);
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
-        <a href="#inicio" className="font-display text-2xl tracking-wider text-foreground">
+        <a
+          href="#inicio"
+          onClick={(e) => handleNavClick(e, "inicio")}
+          className="font-display text-2xl tracking-wider text-foreground"
+        >
           ZUNINO MOTORS
         </a>
 
@@ -24,7 +39,8 @@ const Navbar = () => {
           {navLinks.map((link) => (
             <a
               key={link.href}
-              href={link.href}
+              href={`#${link.href}`}
+              onClick={(e) => handleNavClick(e, link.href)}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors tracking-wide uppercase"
             >
               {link.label}
@@ -64,8 +80,8 @@ const Navbar = () => {
               {navLinks.map((link) => (
                 <a
                   key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
+                  href={`#${link.href}`}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors tracking-wide uppercase"
                 >
                   {link.label}
