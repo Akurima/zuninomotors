@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import heroImage from "@/assets/hero-showroom.jpg";
+import heroImage from "@/assets/background.png";
 
 const HeroSection = () => {
   return (
