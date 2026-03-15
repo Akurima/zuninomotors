@@ -103,7 +103,7 @@ const VehicleDetailModal = ({ vehicle, onClose }: { vehicle: DemoVehicle | Vehic
     const mainImg = vehicle.image_url && vehicle.image_url !== "" ? vehicle.image_url : carCorolla;
 
     // For demo vehicles, just use main image
-    if (vehicle.id.startsWith("demo-")) {
+    if (String(vehicle.id).startsWith("demo-")) {
       setImages([mainImg]);
       setCurrentIndex(0);
       return;
