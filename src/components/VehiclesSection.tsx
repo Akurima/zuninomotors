@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { X } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 // Fallback images for demo
 import carCorolla from "@/assets/car-corolla.jpg";
@@ -95,11 +95,44 @@ const imgSrc =
 };
 
 const VehicleDetailModal = ({ vehicle, onClose }: { vehicle: DemoVehicle | Vehicle | null; onClose: () => void }) => {
+  const [images, setImages] = useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (!vehicle) return;
+    const mainImg = vehicle.image_url && vehicle.image_url !== "" ? vehicle.image_url : carCorolla;
+
+    // For demo vehicles, just use main image
+    if (vehicle.id.startsWith("demo-")) {
+      setImages([mainImg]);
+      setCurrentIndex(0);
+      return;
+    }
+
+    // Fetch additional images from vehicle_images table
+    const fetchImages = async () => {
+      const { data } = await supabase
+        .from("vehicle_images")
+        .select("image_url, display_order")
+        .eq("vehicle_id", vehicle.id)
+        .order("display_order", { ascending: true });
+
+      const extraImages = data?.map((d: any) => d.image_url) || [];
+      const allImages = [mainImg, ...extraImages];
+      setImages(allImages);
+      setCurrentIndex(0);
+    };
+    fetchImages();
+  }, [vehicle]);
+
   if (!vehicle) return null;
-  const imgSrc = vehicle.image_url && vehicle.image_url !== "" ? vehicle.image_url : carCorolla;
+
   const fuel = ('fuel' in vehicle && vehicle.fuel) || "Nafta";
   const transmission = ('transmission' in vehicle && vehicle.transmission) || "Manual";
   const description = ('description' in vehicle && vehicle.description) || "Vehículo en excelente estado, revisado y listo para transferir. Consultanos para más información.";
+
+  const prevImage = () => setCurrentIndex((i) => (i === 0 ? images.length - 1 : i - 1));
+  const nextImage = () => setCurrentIndex((i) => (i === images.length - 1 ? 0 : i + 1));
 
   return (
     <AnimatePresence>
@@ -125,12 +158,41 @@ const VehicleDetailModal = ({ vehicle, onClose }: { vehicle: DemoVehicle | Vehic
             <X className="w-5 h-5 text-foreground" />
           </button>
 
-          <div className="aspect-[16/9] overflow-hidden">
+          {/* Image Carousel */}
+          <div className="aspect-[16/9] overflow-hidden relative group">
             <img
-              src={imgSrc}
+              src={images[currentIndex] || carCorolla}
               alt={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
               className="w-full h-full object-cover"
             />
+
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-background/70 backdrop-blur-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background/90"
+                >
+                  <ChevronLeft className="w-6 h-6 text-foreground" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-background/70 backdrop-blur-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background/90"
+                >
+                  <ChevronRight className="w-6 h-6 text-foreground" />
+                </button>
+
+                {/* Dots */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                  {images.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentIndex(i)}
+                      className={`w-2.5 h-2.5 rounded-full transition-colors ${i === currentIndex ? "bg-primary" : "bg-background/60"}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="p-8">
