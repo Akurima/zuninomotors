@@ -328,6 +328,13 @@ Editar vehículo
  onChange={(e)=>setEditingCar({...editingCar,km:e.target.value})}
 />
 
+<textarea
+ placeholder="Descripción del vehículo"
+ value={editingCar.description || ""}
+ onChange={(e)=>setEditingCar({...editingCar,description:e.target.value})}
+ className="w-full border p-2 mt-2 min-h-[100px]"
+/>
+
 <button
  onClick={updateVehicle}
  className="bg-green-600 text-white p-2 mt-4"

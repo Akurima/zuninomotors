@@ -219,10 +219,14 @@ const VehiclesSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayVehicles.map((vehicle, index) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} index={index} />
+            <VehicleCard key={vehicle.id} vehicle={vehicle} index={index} onDetails={setSelectedVehicle} />
           ))}
         </div>
       </div>
+
+      {selectedVehicle && (
+        <VehicleDetailModal vehicle={selectedVehicle} onClose={() => setSelectedVehicle(null)} />
+      )}
     </section>
   );
 };
