@@ -72,14 +72,22 @@ const imgSrc =
           <span className="font-display text-2xl text-card-foreground">
             USD {vehicle.price}
           </span>
-          <a
-            href={`https://wa.me/59891094375?text=Hola%2C%20me%20interesa%20el%20${vehicle.brand}%20${vehicle.model}%20${vehicle.year}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-primary text-primary-foreground px-5 py-2 text-xs font-medium tracking-wider uppercase hover:opacity-90 transition-opacity"
-          >
-            Consultar
-          </a>
+          <div className="flex gap-2">
+            <button
+              onClick={() => onDetails(vehicle)}
+              className="border border-border text-foreground px-4 py-2 text-xs font-medium tracking-wider uppercase hover:bg-muted transition-colors"
+            >
+              Saber más
+            </button>
+            <a
+              href={`https://wa.me/59891094375?text=Hola%2C%20me%20interesa%20el%20${vehicle.brand}%20${vehicle.model}%20${vehicle.year}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-primary text-primary-foreground px-4 py-2 text-xs font-medium tracking-wider uppercase hover:opacity-90 transition-opacity"
+            >
+              Consultar
+            </a>
+          </div>
         </div>
       </div>
     </motion.div>
