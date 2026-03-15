@@ -34,7 +34,7 @@ const demoVehicles: DemoVehicle[] = [
   { id: "demo-6", brand: "Fiat", model: "Cronos", year: 2021, km: "32.000", price: "17.300", fuel: "Nafta", image_url: carCronos },
 ];
 
-const VehicleCard = ({ vehicle, index }: { vehicle: DemoVehicle | Vehicle; index: number }) => {
+const VehicleCard = ({ vehicle, index, onDetails }: { vehicle: DemoVehicle | Vehicle; index: number; onDetails: (v: DemoVehicle | Vehicle) => void }) => {
 const imgSrc =
  vehicle.image_url && vehicle.image_url !== ""
   ? vehicle.image_url
