@@ -452,6 +452,25 @@ export default function Admin(){
  placeholder="Descripción"
  />
 
+ <label className="flex items-center gap-3 cursor-pointer select-none">
+  <input
+   type="checkbox"
+   checked={editingCar.is_promo || false}
+   onChange={(e)=>setEditingCar({...editingCar, is_promo: e.target.checked, promo_price: e.target.checked ? (editingCar.promo_price || "") : null})}
+   className="w-5 h-5 accent-green-600"
+  />
+  <span className="text-sm font-medium text-slate-700">Habilitar promoción</span>
+ </label>
+
+ {editingCar.is_promo && (
+  <input
+   value={editingCar.promo_price || ""}
+   onChange={(e)=>setEditingCar({...editingCar, promo_price: e.target.value})}
+   className="input"
+   placeholder="Precio de promoción (USD)"
+  />
+ )}
+
  <input
  type="file"
  onChange={(e)=>setMainImage(e.target.files?.[0] || null)}
