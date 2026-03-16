@@ -11,6 +11,8 @@ type Vehicle = {
  fuel: string
  image_url?: string
  description?: string | null
+ is_promo?: boolean
+ promo_price?: string | null
 }
 
 type VehicleImage = {
