@@ -55,9 +55,11 @@ export type Database = {
           id: string
           image_url: string | null
           is_active: boolean | null
+          is_promo: boolean
           km: string
           model: string
           price: string
+          promo_price: string | null
           transmission: string | null
           updated_at: string
           year: number
@@ -70,9 +72,11 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean | null
+          is_promo?: boolean
           km: string
           model: string
           price: string
+          promo_price?: string | null
           transmission?: string | null
           updated_at?: string
           year: number
@@ -85,9 +89,11 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean | null
+          is_promo?: boolean
           km?: string
           model?: string
           price?: string
+          promo_price?: string | null
           transmission?: string | null
           updated_at?: string
           year?: number

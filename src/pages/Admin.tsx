@@ -11,6 +11,8 @@ type Vehicle = {
  fuel: string
  image_url?: string
  description?: string | null
+ is_promo?: boolean
+ promo_price?: string | null
 }
 
 type VehicleImage = {
@@ -141,19 +143,21 @@ export default function Admin(){
    if(uploaded) imageUrl = uploaded
   }
 
-  const { error } = await supabase
-   .from("vehicles")
-   .update({
-    brand: editingCar.brand,
-    model: editingCar.model,
-    year: editingCar.year,
-    price: editingCar.price,
-    km: editingCar.km,
-    fuel: editingCar.fuel,
-    description: editingCar.description,
-    image_url: imageUrl
-   })
-   .eq("id", editingCar.id)
+   const { error } = await supabase
+    .from("vehicles")
+    .update({
+     brand: editingCar.brand,
+     model: editingCar.model,
+     year: editingCar.year,
+     price: editingCar.price,
+     km: editingCar.km,
+     fuel: editingCar.fuel,
+     description: editingCar.description,
+     image_url: imageUrl,
+     is_promo: editingCar.is_promo || false,
+     promo_price: editingCar.is_promo ? editingCar.promo_price : null
+    })
+    .eq("id", editingCar.id)
 
   if(error){
    console.log(error)
@@ -449,6 +453,25 @@ export default function Admin(){
  className="input min-h-[120px]"
  placeholder="Descripción"
  />
+
+ <label className="flex items-center gap-3 cursor-pointer select-none">
+  <input
+   type="checkbox"
+   checked={editingCar.is_promo || false}
+   onChange={(e)=>setEditingCar({...editingCar, is_promo: e.target.checked, promo_price: e.target.checked ? (editingCar.promo_price || "") : null})}
+   className="w-5 h-5 accent-green-600"
+  />
+  <span className="text-sm font-medium text-slate-700">Habilitar promoción</span>
+ </label>
+
+ {editingCar.is_promo && (
+  <input
+   value={editingCar.promo_price || ""}
+   onChange={(e)=>setEditingCar({...editingCar, promo_price: e.target.value})}
+   className="input"
+   placeholder="Precio de promoción (USD)"
+  />
+ )}
 
  <input
  type="file"
