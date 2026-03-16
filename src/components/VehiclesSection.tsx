@@ -70,9 +70,17 @@
                 <span>{fuel}</span>   
               </div>
               <div className="flex items-center justify-between mt-4">
-                <span className="font-display text-2xl text-card-foreground">
-                  USD {vehicle.price}
-                </span>   
+                <div className="flex items-center gap-2">
+                  {'is_promo' in vehicle && vehicle.is_promo && 'promo_price' in vehicle && vehicle.promo_price ? (
+                    <>
+                      <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider">PROMO</span>
+                      <span className="font-display text-lg text-muted-foreground line-through">USD {vehicle.price}</span>
+                      <span className="font-display text-2xl text-card-foreground">USD {vehicle.promo_price}</span>
+                    </>
+                  ) : (
+                    <span className="font-display text-2xl text-card-foreground">USD {vehicle.price}</span>
+                  )}
+                </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => onDetails(vehicle)}
