@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { supabase } from "@/integrations/supabase/client"
 
 type Vehicle = {
@@ -8,6 +8,7 @@ type Vehicle = {
  year: number
  price: string
  km: string
+ fuel: string
  image_url?: string
  description?: string | null
 }
@@ -28,9 +29,16 @@ export default function Admin(){
  const [price,setPrice] = useState("")
  const [km,setKm] = useState("")
  const [image,setImage] = useState<File | null>(null)
+ const [fuel,setFuel] = useState("Nafta")
+
  const [editingCar,setEditingCar] = useState<Vehicle | null>(null)
  const [editingImages,setEditingImages] = useState<VehicleImage[]>([])
  const [uploadingImages,setUploadingImages] = useState(false)
+ const [mainImage,setMainImage] = useState<File | null>(null)
+
+ const [loading,setLoading] = useState(true)
+
+ const editSectionRef = useRef<HTMLDivElement>(null)
 
  useEffect(()=>{
   const checkUser = async ()=>{
@@ -40,242 +48,443 @@ export default function Admin(){
   checkUser()
  },[])
 
- const loadCars = async ()=>{
+ const loadCars = async()=>{
+  setLoading(true)
+
   const { data } = await supabase
    .from("vehicles")
    .select("*")
    .eq("is_active",true)
    .order("created_at",{ascending:false})
+
   setCars(data || [])
+  setLoading(false)
  }
 
  useEffect(()=>{ loadCars() },[])
 
  const uploadImage = async(file:File)=>{
   const fileName = Date.now()+"-"+file.name
-  const { error } = await supabase.storage.from("vehicles").upload(fileName,file)
-  if(error){ console.log(error); return null }
-  const { data } = supabase.storage.from("vehicles").getPublicUrl(fileName)
+
+  const { error } = await supabase.storage
+   .from("vehicles")
+   .upload(fileName,file)
+
+  if(error){
+   console.log(error)
+   return null
+  }
+
+  const { data } = supabase.storage
+   .from("vehicles")
+   .getPublicUrl(fileName)
+
   return data.publicUrl
  }
 
  const addVehicle = async()=>{
+
   let imageUrl=""
+
   if(image){
-   const uploaded=await uploadImage(image)
-   if(uploaded) imageUrl=uploaded
+   const uploaded = await uploadImage(image)
+   if(uploaded) imageUrl = uploaded
   }
+
   const { error } = await supabase
    .from("vehicles")
-   .insert([{ brand, model, year:Number(year), price, km, fuel:"Nafta", image_url:imageUrl, is_active:true }])
-  if(error){ console.log(error); alert("Error al agregar vehículo") }
-  else{ alert("Vehículo agregado"); loadCars() }
+   .insert([{
+    brand,
+    model,
+    year:Number(year),
+    price,
+    km,
+    fuel,
+    image_url:imageUrl,
+    is_active:true
+   }])
+
+  if(error){
+   console.log(error)
+   alert("Error al agregar vehículo")
+  }else{
+   alert("Vehículo agregado")
+   loadCars()
+  }
  }
 
  const deleteVehicle = async(id:string)=>{
   if(!confirm("¿Eliminar vehículo definitivamente?")) return
-  const { error } = await supabase.from("vehicles").delete().eq("id",id)
-  if(error){ console.log(error); alert("Error al eliminar") }
-  else{ alert("Vehículo eliminado"); loadCars() }
+
+  const { error } = await supabase
+   .from("vehicles")
+   .delete()
+   .eq("id",id)
+
+  if(error){
+   console.log(error)
+   alert("Error al eliminar")
+  }else{
+   alert("Vehículo eliminado")
+   loadCars()
+  }
  }
 
  const updateVehicle = async()=>{
+
   if(!editingCar) return
+
+  let imageUrl = editingCar.image_url
+
+  if(mainImage){
+   const uploaded = await uploadImage(mainImage)
+   if(uploaded) imageUrl = uploaded
+  }
+
   const { error } = await supabase
    .from("vehicles")
-   .update({ brand:editingCar.brand, model:editingCar.model, year:editingCar.year, price:editingCar.price, km:editingCar.km, description:editingCar.description })
-   .eq("id",editingCar.id)
-  if(error){ console.log(error); alert("Error al actualizar") }
-  else{ alert("Vehículo actualizado"); setEditingCar(null); loadCars() }
+   .update({
+    brand: editingCar.brand,
+    model: editingCar.model,
+    year: editingCar.year,
+    price: editingCar.price,
+    km: editingCar.km,
+    fuel: editingCar.fuel,
+    description: editingCar.description,
+    image_url: imageUrl
+   })
+   .eq("id", editingCar.id)
+
+  if(error){
+   console.log(error)
+   alert("Error al actualizar")
+  }else{
+   alert("Vehículo actualizado")
+   setEditingCar(null)
+   setMainImage(null)
+   loadCars()
+  }
+
  }
 
- // Load images for editing car
  const loadCarImages = async(vehicleId:string)=>{
   const { data } = await supabase
    .from("vehicle_images")
    .select("*")
    .eq("vehicle_id",vehicleId)
    .order("display_order",{ascending:true})
-  setEditingImages((data as VehicleImage[]) || [])
- }
 
- const startEditing = (car:Vehicle)=>{
-  setEditingCar(car)
-  loadCarImages(car.id)
+  setEditingImages((data as VehicleImage[]) || [])
  }
 
  const addExtraImages = async(files:FileList)=>{
   if(!editingCar) return
-  setUploadingImages(true)
-  const maxOrder = editingImages.length > 0 ? Math.max(...editingImages.map(i=>i.display_order)) : 0
 
-  for(let i=0; i<files.length; i++){
+  setUploadingImages(true)
+
+  const maxOrder = editingImages.length > 0
+   ? Math.max(...editingImages.map(i=>i.display_order))
+   : 0
+
+  for(let i=0;i<files.length;i++){
+
    const url = await uploadImage(files[i])
+
    if(url){
-    await supabase.from("vehicle_images").insert([{
-     vehicle_id: editingCar.id,
-     image_url: url,
-     display_order: maxOrder + i + 1
-    }])
+    await supabase
+     .from("vehicle_images")
+     .insert([{
+      vehicle_id: editingCar.id,
+      image_url:url,
+      display_order:maxOrder + i + 1
+     }])
    }
+
   }
+
   await loadCarImages(editingCar.id)
+
   setUploadingImages(false)
  }
 
  const deleteExtraImage = async(imageId:string)=>{
-  await supabase.from("vehicle_images").delete().eq("id",imageId)
+  await supabase
+   .from("vehicle_images")
+   .delete()
+   .eq("id",imageId)
+
   if(editingCar) await loadCarImages(editingCar.id)
  }
 
+ if(loading){
+  return(
+   <div className="min-h-screen flex items-center justify-center">
+    Cargando vehículos...
+   </div>
+  )
+ }
+
  return(
- <div className="p-10 justify-center items-center" style={{backgroundColor: "#ffffff"}}>
-  <h1 className="text-4xl mb-6 text-center">Zunino Motors</h1>
 
-  <h3 className="text-3xl mb-6 text-center">PANEL Administrativo</h3>
+ <div className="min-h-screen bg-slate-50 py-12 px-6">
 
-  {/* FORMULARIO AGREGAR */}
-  <div className="flex flex-col gap-3 max-w-md mb-10 p-6 border mx-auto">
-   <input placeholder="Marca" onChange={(e)=>setBrand(e.target.value)} className="border p-2" />
-   <input placeholder="Modelo" onChange={(e)=>setModel(e.target.value)} className="border p-2" />
-   <input placeholder="Año" onChange={(e)=>setYear(e.target.value)} className="border p-2" />
-   <input placeholder="Precio" onChange={(e)=>setPrice(e.target.value)} className="border p-2" />
-   <input placeholder="KM" onChange={(e)=>setKm(e.target.value)} className="border p-2" />
-   <input type="file" onChange={(e)=>setImage(e.target.files?.[0] || null)} />
-   <button onClick={addVehicle} className="bg-foreground text-background p-2" style={{backgroundColor: "#66a8f3", color: "#fff", borderRadius: "4px"}}>Agregar vehículo</button>
-  </div>
+ <div className="max-w-6xl mx-auto space-y-12">
 
-  {/* TABLA */}
-  <table className="w-full border">
-   <thead>
-    <tr className="border">
-     <th className="p-2">Foto</th>
-     <th>Auto</th>
-     <th>Año</th>
-     <th>Precio</th>
-     <th>Acciones</th>
-    </tr>
-   </thead>
-   <tbody>
-    {cars.map((car)=>(
-     <tr key={car.id} className="border">
-      <td className="p-2">
-       {car.image_url && <img src={car.image_url} className="w-24" />}
-      </td>
-      <td>{car.brand} {car.model}</td>
-      <td>{car.year}</td>
-      <td>USD {car.price}</td>
-      <td>
-       <button onClick={()=>startEditing(car)} className="bg-accent text-accent-foreground px-3 py-1 mr-2">Editar</button>
-       <button onClick={()=>deleteVehicle(car.id)} className="bg-destructive text-destructive-foreground px-3 py-1">Eliminar</button>
-      </td>
-     </tr>
-    ))}
-   </tbody>
-  </table>
+ {/* HEADER */}
 
-  {/* EDITAR */}
-  {editingCar && (
-   <div className="mt-10 p-6 border max-w-lg">
-    <h2 className="text-xl mb-4">Editar vehículo</h2>
-    <div className="flex flex-col gap-2">
-     <input value={editingCar.brand} onChange={(e)=>setEditingCar({...editingCar,brand:e.target.value})} className="border p-2" />
-     <input value={editingCar.model} onChange={(e)=>setEditingCar({...editingCar,model:e.target.value})} className="border p-2" />
-     <input value={editingCar.year} onChange={(e)=>setEditingCar({...editingCar,year:Number(e.target.value)})} className="border p-2" />
-     <input value={editingCar.price} onChange={(e)=>setEditingCar({...editingCar,price:e.target.value})} className="border p-2" />
-     <input value={editingCar.km} onChange={(e)=>setEditingCar({...editingCar,km:e.target.value})} className="border p-2" />
-     <textarea
-      placeholder="Descripción del vehículo"
-      value={editingCar.description || ""}
-      onChange={(e)=>setEditingCar({...editingCar,description:e.target.value})}
-      className="w-full border p-2 min-h-[100px]"
-     />
-    </div>
+ <div className="text-center space-y-2">
 
-    {/* GALERÍA DE IMÁGENES */}
-    <div className="mt-6">
-     <h3 className="text-lg mb-3">Imágenes adicionales</h3>
-     <div className="grid grid-cols-3 gap-3 mb-4">
-      {editingImages.map((img)=>(
-       <div key={img.id} className="relative group">
-        <img src={img.image_url} className="w-full aspect-square object-cover border" />
-        <button
-         onClick={()=>deleteExtraImage(img.id)}
-         className="absolute top-1 right-1 bg-destructive text-destructive-foreground text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-         ✕
-        </button>
-       </div>
-      ))}
-     </div>
-     <input
-      type="file"
-      multiple
-      onChange={(e)=>{ if(e.target.files) addExtraImages(e.target.files) }}
-     />
-     {uploadingImages && <p className="text-sm text-muted-foreground mt-2">Subiendo imágenes...</p>}
-    </div>
+ <h1 className="text-4xl font-bold text-slate-800">
+ Zunino Motors
+ </h1>
 
-<h2 className="text-xl mb-4">
-Editar vehículo
-</h2>
+ <p className="text-slate-500 tracking-wide">
+ Panel Administrativo
+ </p>
 
-<p>Aquí puedes editar los detalles del vehículo.</p> <br />
+ </div>
 
-<input
+ {/* AGREGAR VEHICULO */}
+
+ <div className="bg-white border rounded-xl shadow-sm p-6 max-w-lg mx-auto space-y-4">
+
+ <h2 className="text-xl font-semibold text-slate-700">
+ Agregar Vehículo
+ </h2>
+
+ <input
+ placeholder="Marca"
+ onChange={(e)=>setBrand(e.target.value)}
+ className="input"
+ />
+
+ <input
+ placeholder="Modelo"
+ onChange={(e)=>setModel(e.target.value)}
+ className="input"
+ />
+
+ <input
+ placeholder="Año"
+ onChange={(e)=>setYear(e.target.value)}
+ className="input"
+ />
+
+ <input
+ placeholder="Precio"
+ onChange={(e)=>setPrice(e.target.value)}
+ className="input"
+ />
+
+ <input
+ placeholder="KM"
+ onChange={(e)=>setKm(e.target.value)}
+ className="input"
+ />
+
+ <select
+ value={fuel}
+ onChange={(e)=>setFuel(e.target.value)}
+ className="input"
+ >
+
+ <option value="Nafta">Nafta</option>
+ <option value="Diesel">Diesel</option>
+ <option value="Eléctrico">Eléctrico</option>
+
+ </select>
+
+ <input
+ type="file"
+ onChange={(e)=>setImage(e.target.files?.[0] || null)}
+ />
+
+ <button
+ onClick={addVehicle}
+ className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
+ >
+ Agregar vehículo
+ </button>
+
+ </div>
+
+ {/* INVENTARIO */}
+
+ <div className="bg-white border rounded-xl shadow-sm p-6">
+
+ <h2 className="text-xl font-semibold mb-4">
+ Inventario
+ </h2>
+
+ <table className="w-full">
+
+ <thead className="border-b text-left text-slate-500">
+
+ <tr>
+ <th className="py-2">Foto</th>
+ <th>Vehículo</th>
+ <th>Año</th>
+ <th>Precio</th>
+ <th>Acciones</th>
+ </tr>
+
+ </thead>
+
+ <tbody>
+
+ {cars.map((car)=>(
+
+ <tr key={car.id} className="border-b">
+
+ <td className="py-2">
+ {car.image_url && <img src={car.image_url} className="w-20 rounded"/>}
+ </td>
+
+ <td>{car.brand} {car.model}</td>
+
+ <td>{car.year}</td>
+
+ <td>USD {car.price}</td>
+
+ <td className="space-x-2">
+
+ <button
+ onClick={()=>{
+
+ setEditingCar(car)
+
+ setTimeout(()=>{
+ editSectionRef.current?.scrollIntoView({
+ behavior:"smooth"
+ })
+ },100)
+
+ }}
+ className="bg-blue-500 text-white px-3 py-1 rounded"
+ >
+
+ Editar
+
+ </button>
+
+ <button
+ onClick={()=>deleteVehicle(car.id)}
+ className="bg-red-500 text-white px-3 py-1 rounded"
+ >
+
+ Eliminar
+
+ </button>
+
+ </td>
+
+ </tr>
+
+ ))}
+
+ </tbody>
+
+ </table>
+
+ </div>
+
+ {/* EDITAR VEHICULO */}
+
+ {editingCar && (
+
+ <div
+ ref={editSectionRef}
+ className="bg-white border rounded-xl shadow-sm p-6 max-w-xl mx-auto space-y-3"
+ >
+
+ <h2 className="text-xl font-semibold">
+ Editar vehículo
+ </h2>
+
+ <input
  value={editingCar.brand}
  onChange={(e)=>setEditingCar({...editingCar,brand:e.target.value})}
-/>
+ className="input"
+ />
 
-<input
+ <input
  value={editingCar.model}
  onChange={(e)=>setEditingCar({...editingCar,model:e.target.value})}
-/>
+ className="input"
+ />
 
-<input
+ <input
  value={editingCar.year}
  onChange={(e)=>setEditingCar({...editingCar,year:Number(e.target.value)})}
-/>
+ className="input"
+ />
 
-<input
+ <input
  value={editingCar.price}
  onChange={(e)=>setEditingCar({...editingCar,price:e.target.value})}
-/>
+ className="input"
+ />
 
-<input
+ <input
  value={editingCar.km}
  onChange={(e)=>setEditingCar({...editingCar,km:e.target.value})}
-/>
+ className="input"
+ />
 
-<br />
-<button
+ <select
+ value={editingCar.fuel}
+ onChange={(e)=>setEditingCar({...editingCar,fuel:e.target.value})}
+ className="input"
+ >
+
+ <option value="Nafta">Nafta</option>
+ <option value="Diesel">Diesel</option>
+ <option value="Eléctrico">Eléctrico</option>
+
+ </select>
+
+ <textarea
+ value={editingCar.description || ""}
+ onChange={(e)=>setEditingCar({...editingCar,description:e.target.value})}
+ className="input min-h-[120px]"
+ placeholder="Descripción"
+ />
+
+ <input
+ type="file"
+ onChange={(e)=>setMainImage(e.target.files?.[0] || null)}
+ />
+
+ <button
  onClick={updateVehicle}
- className="bg-green-600 text-white p-2 mt-4"
->
-Guardar cambios
-</button>
+ className="bg-green-600 text-white p-2 rounded"
+ >
 
-<button
- onClick={()=>setEditingCar(null)}
- className="ml-4"
->
-Cancelar
-</button>
+ Guardar cambios
 
-</div>
+ </button>
 
-)}
-
-  
-
-  <br/>
-  <button
-   onClick={async()=>{ await supabase.auth.signOut(); window.location.href="/login" }}
-   className="bg-muted text-muted-foreground px-4 py-2 mx-auto block"
-   style={{backgroundColor: "#66a8f3", color: "#fff", borderRadius: "4px" }}
-  >
-   Cerrar sesión
-  </button>
  </div>
+
+ )}
+
+ {/* LOGOUT */}
+
+ <button
+ onClick={async()=>{
+ await supabase.auth.signOut()
+ window.location.href="/login"
+ }}
+ className="block mx-auto bg-blue-600 text-white px-6 py-2 rounded-md"
+ >
+
+ Cerrar sesión
+
+ </button>
+
+ </div>
+
+ </div>
+
  )
-} 
+}

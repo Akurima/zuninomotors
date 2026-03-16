@@ -82,3 +82,16 @@ html {
   background: hsl(var(--muted-foreground));
   border-radius: 3px;
 }
+
+.input{
+border:1px solid #e2e8f0;
+padding:8px;
+border-radius:6px;
+width:100%;
+}
+
+.input:focus{
+outline:none;
+border-color:#3b82f6;
+box-shadow:0 0 0 2px rgba(59,130,246,0.2);
+} 
