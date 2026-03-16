@@ -22,7 +22,7 @@ const HeroSection = () => {
           transition={{ duration: 0.6 }}
           className="text-primary-foreground/70 text-sm tracking-[0.3em] uppercase mb-4 font-body"
         >
-          Parada Rodó · Canelones · Uruguay
+          ·
         </motion.p>
 
         <motion.h1
