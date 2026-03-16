@@ -216,9 +216,17 @@
                     <span className="bg-muted px-3 py-1">{transmission}</span>
                   </div>
 
-                  <p className="font-display text-3xl text-card-foreground mt-6">
-                    USD {vehicle.price}
-                  </p>
+                  <div className="mt-6">
+                    {'is_promo' in vehicle && vehicle.is_promo && 'promo_price' in vehicle && vehicle.promo_price ? (
+                      <div className="flex items-center gap-3">
+                        <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider">PROMO</span>
+                        <span className="font-display text-2xl text-muted-foreground line-through">USD {vehicle.price}</span>
+                        <span className="font-display text-3xl text-card-foreground">USD {vehicle.promo_price}</span>
+                      </div>
+                    ) : (
+                      <p className="font-display text-3xl text-card-foreground">USD {vehicle.price}</p>
+                    )}
+                  </div>
 
                   <div className="mt-6 border-t border-border pt-6">
                     <h4 className="font-display text-lg text-card-foreground mb-2 uppercase tracking-wider">Descripción</h4>

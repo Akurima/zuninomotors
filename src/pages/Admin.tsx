@@ -143,19 +143,21 @@ export default function Admin(){
    if(uploaded) imageUrl = uploaded
   }
 
-  const { error } = await supabase
-   .from("vehicles")
-   .update({
-    brand: editingCar.brand,
-    model: editingCar.model,
-    year: editingCar.year,
-    price: editingCar.price,
-    km: editingCar.km,
-    fuel: editingCar.fuel,
-    description: editingCar.description,
-    image_url: imageUrl
-   })
-   .eq("id", editingCar.id)
+   const { error } = await supabase
+    .from("vehicles")
+    .update({
+     brand: editingCar.brand,
+     model: editingCar.model,
+     year: editingCar.year,
+     price: editingCar.price,
+     km: editingCar.km,
+     fuel: editingCar.fuel,
+     description: editingCar.description,
+     image_url: imageUrl,
+     is_promo: editingCar.is_promo || false,
+     promo_price: editingCar.is_promo ? editingCar.promo_price : null
+    })
+    .eq("id", editingCar.id)
 
   if(error){
    console.log(error)
