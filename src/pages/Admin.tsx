@@ -268,7 +268,7 @@ return(
 
 <div className="w-64 bg-zinc-950 border-r border-zinc-800 p-6 flex flex-col">
 
-<h1 className="text-xl font-bold text-amber-400">ZUNINO</h1>
+<h1 className="text-xl font-bold text-white">ZUNINO MOTORS</h1>
 
 <button
 onClick={async()=>{
