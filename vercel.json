@@ -4,7 +4,13 @@
   ],
   "redirects": [
     {
-      "source": "https://zuninomotors.com/(.*)",
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "zuninomotors.com"
+        }
+      ],
       "destination": "https://www.zuninomotors.com/$1",
       "permanent": true
     }
