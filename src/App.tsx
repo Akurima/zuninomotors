@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx"
 import Login from "./pages/Login"
+import { Analytics } from "@vercel/analytics/next"
 
 
 
@@ -15,6 +16,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <Analytics/>
       <Toaster />
       <Sonner />
       <BrowserRouter>
