@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import logoNavbar from "@/assets/logonavbar.png";
 
 const navLinks = [
   { label: "Inicio", href: "inicio" },
@@ -12,26 +13,43 @@ const navLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    setIsOpen(false);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const offset = 64; // navbar height
-      const top = element.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: "smooth" });
-    }
-  }, []);
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+      e.preventDefault();
+      setIsOpen(false);
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const offset = 64;
+        const top =
+          element.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    },
+    []
+  );
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-border">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
+        
+        {/* LOGO */}
         <a
           href="#inicio"
           onClick={(e) => handleNavClick(e, "inicio")}
-          className="font-display text-2xl tracking-wider text-foreground"
+          className="flex items-center"
         >
-          ZUNINO MOTORS
+          <img
+            src={logoNavbar}
+            alt="Zunino Motors"
+            className="
+              h-52 md:h-54
+              w-auto
+              object-contain
+              transition-all duration-300
+              hover:scale-105
+              translate-y-2
+            "
+          />
         </a>
 
         {/* Desktop nav */}
@@ -46,6 +64,7 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
+
           <a
             href="https://wa.me/59891094375"
             target="_blank"
@@ -74,7 +93,7 @@ const Navbar = () => {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-background border-b border-border overflow-hidden"
+            className="md:hidden bg-white border-b border-border overflow-hidden"
           >
             <div className="flex flex-col px-4 py-4 gap-4">
               {navLinks.map((link) => (
@@ -87,6 +106,7 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
+
               <a
                 href="https://wa.me/59891094375"
                 target="_blank"

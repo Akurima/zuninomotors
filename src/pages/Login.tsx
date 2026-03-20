@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
-import zuninoLogo from "@/assets/zunino-logo.png"
+import zuninoLogo from "@/assets/Logo.jpg"
 
 export default function Login() {
   const [email, setEmail] = useState("")

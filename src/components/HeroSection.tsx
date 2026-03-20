@@ -3,7 +3,7 @@ import heroImage from "@/assets/background.png";
 
 const HeroSection = () => {
   return (
-    <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="inicio" className="relative min-h-screen flex justify-center overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
@@ -11,41 +11,21 @@ const HeroSection = () => {
           alt="Zunino Motors showroom"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-foreground/70" />
+        <div className="absolute inset-0 bg-foreground/10" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-primary-foreground/70 text-sm tracking-[0.3em] uppercase mb-4 font-body"
-        >
-          ·
-        </motion.p>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="font-display text-6xl md:text-8xl lg:text-9xl text-primary-foreground leading-none mb-6"
-        >
-          ZUNINO
-          <br />
-         ―MOTORS―
-        </motion.h1>
-
+      <div className="relative z-10 container mx-auto px-4 text-center pt-[65vh] pb-20">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-primary-foreground/80 text-lg md:text-xl   mx-auto mb-10 font-body font-light"
+          className="text-primary-foreground/80 text-lg md:text-2xl mx-auto mb-10 font-body font-light"
         >     
           <br />  
-          Vehículos seleccionados, excelentes oportunidades y atención personalizada.
+          <b>Vehículos seleccionados, excelentes oportunidades y atención personalizada.</b>
           <br />  
-          Comprá, vendé o permutá tu auto con confianza.  
+          <b>Comprá, vendé o permutá tu auto con confianza.</b>  
         </motion.p>
 
         <motion.div

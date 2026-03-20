@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const StatsSection = () => {
   const stats = [
-    { value: "5+", label: "Años de experiencia" },
+    { value: "10+", label: "Años de experiencia" },
     { value: "50+", label: "Vehículos vendidos" },
     { value: "100%", label: "Documentación al día" },
     { value: "⭐", label: "Satisfacción garantizada" },
