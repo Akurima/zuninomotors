@@ -30,13 +30,11 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-border">
-      <div className="container mx-auto flex items-center justify-between h-16 px-4">
-        
-        {/* LOGO */}
+      <div className="w-full h-16 flex items-center justify-between pl-0 pr-4 md:container md:mx-auto md:px-4">
         <a
           href="#inicio"
           onClick={(e) => handleNavClick(e, "inicio")}
-          className="flex items-center"
+          className="flex items-center -ml-3 md:ml-0"
         >
           <img
             src={logoNavbar}
@@ -48,11 +46,12 @@ const Navbar = () => {
               transition-all duration-300
               hover:scale-105
               translate-y-2
+              block
+              -ml-10
             "
           />
         </a>
 
-        {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
@@ -75,7 +74,6 @@ const Navbar = () => {
           </a>
         </div>
 
-        {/* Mobile toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden text-foreground"
@@ -85,7 +83,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
