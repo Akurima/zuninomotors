@@ -25,15 +25,77 @@ interface DemoVehicle {
   transmission?: string;
   image_url: string;
   description?: string;
+  is_promo?: boolean;
+  promo_price?: string | null;
 }
 
 const demoVehicles: DemoVehicle[] = [
-  { id: "demo-1", brand: "Toyota", model: "Corolla", year: 2016, km: "110.000", price: "16.500", fuel: "Nafta", transmission: "Manual", image_url: carCorolla },
-  { id: "demo-2", brand: "Volkswagen", model: "Golf", year: 2018, km: "78.000", price: "19.900", fuel: "Nafta", transmission: "Automático", image_url: carGolf },
-  { id: "demo-3", brand: "Chevrolet", model: "Onix", year: 2020, km: "45.000", price: "14.800", fuel: "Nafta", transmission: "Manual", image_url: carOnix },
-  { id: "demo-4", brand: "Ford", model: "EcoSport", year: 2019, km: "62.000", price: "18.200", fuel: "Nafta", transmission: "Automático", image_url: carEcosport },
-  { id: "demo-5", brand: "Renault", model: "Duster", year: 2017, km: "95.000", price: "15.500", fuel: "Nafta", transmission: "Manual", image_url: carDuster },
-  { id: "demo-6", brand: "Fiat", model: "Cronos", year: 2021, km: "32.000", price: "17.300", fuel: "Nafta", transmission: "Automático", image_url: carCronos },
+  {
+    id: "demo-1",
+    brand: "Toyota",
+    model: "Corolla",
+    year: 2016,
+    km: "110.000",
+    price: "16.500",
+    fuel: "Nafta",
+    transmission: "Manual",
+    image_url: carCorolla,
+  },
+  {
+    id: "demo-2",
+    brand: "Volkswagen",
+    model: "Golf",
+    year: 2018,
+    km: "78.000",
+    price: "19.900",
+    fuel: "Nafta",
+    transmission: "Automático",
+    image_url: carGolf,
+  },
+  {
+    id: "demo-3",
+    brand: "Chevrolet",
+    model: "Onix",
+    year: 2020,
+    km: "45.000",
+    price: "14.800",
+    fuel: "Nafta",
+    transmission: "Manual",
+    image_url: carOnix,
+  },
+  {
+    id: "demo-4",
+    brand: "Ford",
+    model: "EcoSport",
+    year: 2019,
+    km: "62.000",
+    price: "18.200",
+    fuel: "Nafta",
+    transmission: "Automático",
+    image_url: carEcosport,
+  },
+  {
+    id: "demo-5",
+    brand: "Renault",
+    model: "Duster",
+    year: 2017,
+    km: "95.000",
+    price: "15.500",
+    fuel: "Nafta",
+    transmission: "Manual",
+    image_url: carDuster,
+  },
+  {
+    id: "demo-6",
+    brand: "Fiat",
+    model: "Cronos",
+    year: 2021,
+    km: "32.000",
+    price: "17.300",
+    fuel: "Nafta",
+    transmission: "Automático",
+    image_url: carCronos,
+  },
 ];
 
 type VehicleLike = DemoVehicle | Vehicle;
@@ -48,10 +110,11 @@ const isMobileDevice = () => {
   return byWidth || byUA;
 };
 
-const getVehiclePriceLabel = (vehicle: VehicleLike) => {
+const getVehicleDisplayPrice = (vehicle: VehicleLike) => {
   if ("is_promo" in vehicle && vehicle.is_promo && "promo_price" in vehicle && vehicle.promo_price) {
     return vehicle.promo_price;
   }
+
   return vehicle.price;
 };
 
@@ -64,8 +127,23 @@ const buildVehicleShareUrl = (vehicle: VehicleLike) => {
   return url.toString();
 };
 
+const buildVehicleTitle = (vehicle: VehicleLike) => {
+  return `${vehicle.brand} ${vehicle.model} ${vehicle.year}`;
+};
+
 const buildVehicleShareText = (vehicle: VehicleLike) => {
-  return `${vehicle.brand} ${vehicle.model} ${vehicle.year} · USD ${getVehiclePriceLabel(vehicle)}`;
+  return `${buildVehicleTitle(vehicle)} · USD ${getVehicleDisplayPrice(vehicle)}`;
+};
+
+const buildWhatsappUrl = (vehicle: VehicleLike) => {
+  const vehicleUrl = buildVehicleShareUrl(vehicle);
+  const message = [
+    "Hola, estoy interesado en este vehículo:",
+    `${vehicle.brand} ${vehicle.model} ${vehicle.year}`,
+    `Enlace: ${vehicleUrl}`,
+  ].join("\n");
+
+  return `https://wa.me/59891094375?text=${encodeURIComponent(message)}`;
 };
 
 const copyTextToClipboard = async (text: string) => {
@@ -80,7 +158,7 @@ const copyTextToClipboard = async (text: string) => {
 
 const shareVehicle = async (vehicle: VehicleLike) => {
   const shareUrl = buildVehicleShareUrl(vehicle);
-  const shareTitle = `${vehicle.brand} ${vehicle.model} ${vehicle.year}`;
+  const shareTitle = buildVehicleTitle(vehicle);
   const shareText = `Mira este vehículo: ${buildVehicleShareText(vehicle)}`;
 
   try {
@@ -120,18 +198,26 @@ const VehicleCard = ({
       className="group border border-border bg-card overflow-hidden hover:shadow-lg transition-shadow duration-300"
     >
       <div className="aspect-[3/2] overflow-hidden relative">
-        <img
-          src={imgSrc}
-          alt={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
+        <button
+          type="button"
+          onClick={() => onDetails(vehicle)}
+          className="block w-full h-full text-left cursor-pointer"
+          aria-label={`Abrir detalle de ${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
+        >
+          <img
+            src={imgSrc}
+            alt={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        </button>
 
         <button
           onClick={() => shareVehicle(vehicle)}
           className="absolute top-3 right-3 z-10 bg-black/70 backdrop-blur-sm border border-white/10 text-white p-2 hover:bg-black/85 transition-colors"
           aria-label={`Compartir ${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
           title="Compartir vehículo"
+          type="button"
         >
           <Share2 className="w-4 h-4" />
         </button>
@@ -174,12 +260,13 @@ const VehicleCard = ({
           <button
             onClick={() => onDetails(vehicle)}
             className="border border-border text-foreground px-4 py-2 text-xs font-medium tracking-wider uppercase hover:bg-muted transition-colors"
+            type="button"
           >
-            Saber más
+            Ver más fotos
           </button>
 
           <a
-            href={`https://wa.me/59891094375?text=Hola%2C%20me%20interesa%20el%20${vehicle.brand}%20${vehicle.model}%20${vehicle.year}`}
+            href={buildWhatsappUrl(vehicle)}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-primary text-primary-foreground px-4 py-2 text-xs font-medium tracking-wider uppercase hover:opacity-90 transition-opacity"
@@ -190,6 +277,7 @@ const VehicleCard = ({
           <button
             onClick={() => shareVehicle(vehicle)}
             className="border border-border text-foreground px-3 py-2 text-xs font-medium tracking-wider uppercase hover:bg-muted transition-colors inline-flex items-center gap-2"
+            type="button"
           >
             <Share2 className="w-3.5 h-3.5" />
             Compartir
@@ -290,6 +378,7 @@ const VehicleDetailModal = ({
           <button
             onClick={handleClose}
             className="absolute top-4 right-4 z-10 bg-background/80 backdrop-blur-sm p-2 hover:bg-muted transition-colors"
+            type="button"
           >
             <X className="w-5 h-5 text-foreground" />
           </button>
@@ -306,6 +395,7 @@ const VehicleDetailModal = ({
               className="absolute top-4 left-4 z-10 bg-black/70 backdrop-blur-sm border border-white/10 text-white p-2 hover:bg-black/85 transition-colors"
               aria-label={`Compartir ${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
               title="Compartir vehículo"
+              type="button"
             >
               <Share2 className="w-4 h-4" />
             </button>
@@ -315,6 +405,7 @@ const VehicleDetailModal = ({
                 <button
                   onClick={prevImage}
                   className="absolute left-3 top-1/2 -translate-y-1/2 bg-background/70 backdrop-blur-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background/90"
+                  type="button"
                 >
                   <ChevronLeft className="w-6 h-6 text-foreground" />
                 </button>
@@ -322,6 +413,7 @@ const VehicleDetailModal = ({
                 <button
                   onClick={nextImage}
                   className="absolute right-3 top-1/2 -translate-y-1/2 bg-background/70 backdrop-blur-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background/90"
+                  type="button"
                 >
                   <ChevronRight className="w-6 h-6 text-foreground" />
                 </button>
@@ -334,6 +426,7 @@ const VehicleDetailModal = ({
                       className={`w-2.5 h-2.5 rounded-full transition-colors ${
                         i === currentIndex ? "bg-primary" : "bg-background/60"
                       }`}
+                      type="button"
                     />
                   ))}
                 </div>
@@ -382,7 +475,7 @@ const VehicleDetailModal = ({
 
             <div className="mt-8 flex gap-3 flex-wrap">
               <a
-                href={`https://wa.me/59891094375?text=Hola%2C%20me%20interesa%20el%20${vehicle.brand}%20${vehicle.model}%20${vehicle.year}`}
+                href={buildWhatsappUrl(vehicle)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-primary text-primary-foreground px-8 py-3 text-sm font-medium tracking-wider uppercase hover:opacity-90 transition-opacity"
@@ -393,6 +486,7 @@ const VehicleDetailModal = ({
               <button
                 onClick={() => shareVehicle(vehicle)}
                 className="border border-border text-foreground px-8 py-3 text-sm font-medium tracking-wider uppercase hover:bg-muted transition-colors inline-flex items-center gap-2"
+                type="button"
               >
                 <Share2 className="w-4 h-4" />
                 Compartir
@@ -401,6 +495,7 @@ const VehicleDetailModal = ({
               <button
                 onClick={handleClose}
                 className="border border-border text-foreground px-8 py-3 text-sm font-medium tracking-wider uppercase hover:bg-muted transition-colors"
+                type="button"
               >
                 Cerrar
               </button>
